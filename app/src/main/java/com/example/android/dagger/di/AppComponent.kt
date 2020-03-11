@@ -1,6 +1,8 @@
 package com.example.android.dagger.di
 
+import android.content.Context
 import com.example.android.dagger.registration.RegistrationActivity
+import dagger.BindsInstance
 import dagger.Component
 
 /**
@@ -17,6 +19,25 @@ import dagger.Component
  */
 @Component(modules = [StorageModule::class])
 interface AppComponent {
+
+    /**
+     * Factory to create instances of the AppComponent
+     *
+     * Get the context, necessary to create SharedPreferencesStorage instance (used in StorageModule)
+     * (context is already available when the AppComponent instance is created)
+     */
+    @Component.Factory
+    interface Factory {
+        /**
+         * With @BindsInstance, the Context passed in will be available in the graph
+         *
+         * @BindsInstance tells Dagger that it needs to add that instance in the graph and whenever Context
+         * is required, provide that instance.
+         *
+         * @BindsInstance is used for objects that are constructed outside of the graph (e.g. instances of Context).
+         */
+        fun create(@BindsInstance context: Context): AppComponent
+    }
 
     // Classes that can be injected by this Component
     fun inject(activity: RegistrationActivity)
