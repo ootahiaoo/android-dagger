@@ -19,6 +19,7 @@ package com.example.android.dagger.registration
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.android.dagger.MyApplication
 import com.example.android.dagger.R
 import com.example.android.dagger.main.MainActivity
 import com.example.android.dagger.registration.enterdetails.EnterDetailsFragment
@@ -28,10 +29,19 @@ import javax.inject.Inject
 class RegistrationActivity : AppCompatActivity() {
 
     // Field injection example
+    // @Inject annotated fields will be provided by Dagger
     @Inject
     lateinit var registrationViewModel: RegistrationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Grabs instance of the application graph
+        // and populates @Inject fields with objects from the graph
+        (application as MyApplication).appComponent.inject(this)
+
+        // When using Activities, inject Dagger in the Activity's onCreate method before calling
+        // super.onCreate to avoid issues with fragment restoration.
+        // In super.onCreate, an Activity during the restore phase will attach fragments
+        // that might want to access activity bindings.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
 
