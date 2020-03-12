@@ -2,9 +2,7 @@ package com.example.android.dagger.di
 
 import android.content.Context
 import com.example.android.dagger.main.MainActivity
-import com.example.android.dagger.registration.RegistrationActivity
-import com.example.android.dagger.registration.enterdetails.EnterDetailsFragment
-import com.example.android.dagger.registration.termsandconditions.TermsAndConditionsFragment
+import com.example.android.dagger.registration.RegistrationComponent
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -24,7 +22,7 @@ import javax.inject.Singleton
  * Uses @Singleton scope annotation on the component and related classes to have unique instances of them
  */
 @Singleton
-@Component(modules = [StorageModule::class])
+@Component(modules = [StorageModule::class, AppSubcomponents::class])
 interface AppComponent {
 
     /**
@@ -46,9 +44,16 @@ interface AppComponent {
         fun create(@BindsInstance context: Context): AppComponent
     }
 
-    // Classes that can be injected by this Component
-    fun inject(activity: RegistrationActivity)
-    fun inject(fragment: EnterDetailsFragment)
-    fun inject(fragment: TermsAndConditionsFragment)
+    /**
+     * Two ways to interact with the Dagger graph:
+     *   1. Declaring a function that returns a type allows retrieving types from the graph
+     *   2. Declaring a function that returns Unit and takes a class as a parameter allows
+     *  field injection in that class
+     */
+
+    // (1) Expose RegistrationComponent factory from the graph
+    fun registrationComponent(): RegistrationComponent.Factory
+
+    // (2) Classes that can be injected by this Component
     fun inject(activity: MainActivity)
 }
