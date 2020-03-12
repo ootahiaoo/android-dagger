@@ -1,6 +1,7 @@
 package com.example.android.dagger.di
 
 import android.content.Context
+import com.example.android.dagger.login.LoginComponent
 import com.example.android.dagger.main.MainActivity
 import com.example.android.dagger.registration.RegistrationComponent
 import dagger.BindsInstance
@@ -51,8 +52,9 @@ interface AppComponent {
      *  field injection in that class
      */
 
-    // (1) Expose RegistrationComponent factory from the graph
+    // (1) Expose component factories from the graph (to be able to access them in the activities)
     fun registrationComponent(): RegistrationComponent.Factory
+    fun loginComponent(): LoginComponent.Factory
 
     // (2) Classes that can be injected by this Component
     fun inject(activity: MainActivity)
