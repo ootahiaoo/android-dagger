@@ -23,18 +23,21 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.android.dagger.MyApplication
 import com.example.android.dagger.R
 import com.example.android.dagger.login.LoginActivity
+import javax.inject.Inject
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var settingsViewModel: SettingsViewModel
+    // SettingsViewModel is provided by Dagger
+    @Inject
+    lateinit var settingsViewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // Injects appComponent
+        (application as MyApplication).appComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        val userManager = (application as MyApplication).userManager
-
-        settingsViewModel = SettingsViewModel(userManager.userDataRepository!!, userManager)
         setupViews()
     }
 
