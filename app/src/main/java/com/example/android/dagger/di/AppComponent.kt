@@ -5,6 +5,7 @@ import com.example.android.dagger.main.MainActivity
 import com.example.android.dagger.registration.RegistrationActivity
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
 /**
  * Definition of a Dagger component
@@ -17,7 +18,10 @@ import dagger.Component
  *
  * In a more complex application, we could also have a NetworkModule that adds information on
  * how to provide a OkHttpClient, or how to configure Gson or Moshi, for example.
+ *
+ * Uses @Singleton scope annotation on the component and related classes to have unique instances of them
  */
+@Singleton
 @Component(modules = [StorageModule::class])
 interface AppComponent {
 

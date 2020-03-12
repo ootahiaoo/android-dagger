@@ -18,6 +18,7 @@ package com.example.android.dagger.user
 
 import com.example.android.dagger.storage.Storage
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val REGISTERED_USER = "registered_user"
 private const val PASSWORD_SUFFIX = "password"
@@ -27,7 +28,11 @@ private const val PASSWORD_SUFFIX = "password"
  * Knows when the user is logged in.
  *
  * Constructor injection example
+ *
+ * Uses @Singleton annotation to have the same instance provided to RegistrationActivity and MainActivity
+ * (It is scoped to AppComponent)
  */
+@Singleton
 class UserManager @Inject constructor(private val storage: Storage) {
 
     /**
