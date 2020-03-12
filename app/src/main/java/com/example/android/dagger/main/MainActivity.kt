@@ -26,15 +26,9 @@ import com.example.android.dagger.R
 import com.example.android.dagger.login.LoginActivity
 import com.example.android.dagger.registration.RegistrationActivity
 import com.example.android.dagger.settings.SettingsActivity
-import com.example.android.dagger.user.UserManager
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-
-    // @Inject annotated fields will be provided by Dagger
-    // Dagger-injected fields cannot be private. They need to have at least package-private visibility.
-    @Inject
-    lateinit var userManager: UserManager
 
     @Inject
     lateinit var mainViewModel: MainViewModel
@@ -43,11 +37,16 @@ class MainActivity : AppCompatActivity() {
      * If the User is not registered, RegistrationActivity will be launched,
      * If the User is not logged in, LoginActivity will be launched,
      * else carry on with MainActivity
+     *
+     * Doing conditional field injection (here injecting only if the user is logged in) is very dangerous.
+     * We risk getting NullPointerExceptions when interacting with injected fields.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
-        (application as MyApplication).appComponent.inject(this)
 
         super.onCreate(savedInstanceState)
+
+        // Grab userManager from appComponent to check if the user is logged in or not
+        val userManager = (application as MyApplication).appComponent.userManager()
 
         if (!userManager.isUserLoggedIn()) {
             if (!userManager.isUserRegistered()) {
@@ -59,6 +58,11 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             setContentView(R.layout.activity_main)
+
+            // If the MainActivity needs to be displayed, we get the UserComponent
+            // from the application graph and gets this Activity injected
+            userManager.userComponent!!.inject(this)
+
             setupViews()
         }
     }

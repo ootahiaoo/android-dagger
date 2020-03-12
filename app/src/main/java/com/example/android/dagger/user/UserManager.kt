@@ -31,21 +31,24 @@ private const val PASSWORD_SUFFIX = "password"
  *
  * Uses @Singleton annotation to have the same instance provided to RegistrationActivity and MainActivity
  * (It is scoped to AppComponent)
+ *
+ * We add the UserComponent factory as a constructor parameter,
+ * so Dagger will provide a UserComponent instance when creating the instance of UserManager.
  */
 @Singleton
-class UserManager @Inject constructor(private val storage: Storage) {
-
-    /**
-     *  UserDataRepository is specific to a logged in user. This determines if the user
-     *  is logged in or not, when the user logs in, a new instance will be created.
-     *  When the user logs out, this will be null.
-     */
-    var userDataRepository: UserDataRepository? = null
+class UserManager @Inject constructor(
+    private val storage: Storage,
+    // Since UserManager will be in charge of managing the UserComponent lifecycle,
+    // it needs to know how to create instances of it
+    private val userComponentFactory: UserComponent.Factory
+) {
+    var userComponent: UserComponent? = null
+        private set
 
     val username: String
         get() = storage.getString(REGISTERED_USER)
 
-    fun isUserLoggedIn() = userDataRepository != null
+    fun isUserLoggedIn() = userComponent != null
 
     fun isUserRegistered() = storage.getString(REGISTERED_USER).isNotEmpty()
 
@@ -67,7 +70,7 @@ class UserManager @Inject constructor(private val storage: Storage) {
     }
 
     fun logout() {
-        userDataRepository = null
+        userComponent = null
     }
 
     fun unregister() {
@@ -78,6 +81,6 @@ class UserManager @Inject constructor(private val storage: Storage) {
     }
 
     private fun userJustLoggedIn() {
-        userDataRepository = UserDataRepository(this)
+        userComponent = userComponentFactory.create()
     }
 }
