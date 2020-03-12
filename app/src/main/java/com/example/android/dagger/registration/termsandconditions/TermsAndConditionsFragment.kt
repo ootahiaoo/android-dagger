@@ -38,7 +38,7 @@ class TermsAndConditionsFragment : Fragment() {
         super.onAttach(context)
         // For Fragments, inject Components in onAttach method after calling super.onAttach()
         // (For Activity, in onCreate before calling super.onCreate())
-        (activity!!.application as MyApplication).appComponent.inject(this)
+        (activity as RegistrationActivity).registrationComponent.inject(this)
     }
 
     override fun onCreateView(

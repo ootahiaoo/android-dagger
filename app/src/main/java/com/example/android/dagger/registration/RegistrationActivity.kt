@@ -28,15 +28,28 @@ import javax.inject.Inject
 
 class RegistrationActivity : AppCompatActivity() {
 
+    /**
+     * Stores an instance of RegistrationComponent so that its Fragments can access it
+     * Doesn't need to be provided by Dagger (so no @Inject annotation)
+     *
+     * RegistrationComponent is attached to the lifetime of RegistrationActivity in order to:
+     *   - share the same instance of the RegistrationViewModel between the registration Activity and Fragments.
+     *   - have different instances of RegistrationViewModel whenever there's a new registration flow.
+     */
+    lateinit var registrationComponent: RegistrationComponent
+
     // Field injection example
     // @Inject annotated fields will be provided by Dagger
     @Inject
     lateinit var registrationViewModel: RegistrationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Grabs instance of the application graph
-        // and populates @Inject fields with objects from the graph
-        (application as MyApplication).appComponent.inject(this)
+
+        // Creates an instance of Registration component by grabbing the factory from the app graph
+        registrationComponent = (application as MyApplication).appComponent.registrationComponent().create()
+        // Injects this activity to the just created registration component
+        // (to perform field injection and populate the fields annotated with @Inject)
+        registrationComponent.inject(this)
 
         // When using Activities, inject Dagger in the Activity's onCreate method before calling
         // super.onCreate to avoid issues with fragment restoration.
